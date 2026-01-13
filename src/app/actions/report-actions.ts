@@ -2,9 +2,10 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../../../lib/authOptions";
-import prisma from "../../../../lib/prisma";
-import { submissionSchema } from "../../../../lib/validation";
+import { authOptions } from "../../lib/authOptions";
+import prisma from "../../lib/prisma";
+import { SubmissionFormData, submissionSchema } from "../../lib/validation";
+import { Prisma } from "@prisma/client";
 
 export async function getReportData(
   page: number = 1,
@@ -25,7 +26,7 @@ export async function getReportData(
   const skip = (page - 1) * limit;
 
   // Base where clause with filters
-  const where: any = {};
+  const where: Prisma.SubmissionWhereInput = {};
 
   // Apply filters
   if (filters.facilityCode) {
@@ -142,7 +143,7 @@ export async function getSubmissionById(id: string) {
   return submission;
 }
 
-export async function updateSubmission(data: any) {
+export async function updateSubmission(data: SubmissionFormData) {
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.role !== "SUBMITTER") {

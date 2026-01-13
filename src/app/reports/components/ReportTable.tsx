@@ -1,42 +1,22 @@
 // components/reports/ReportTable.tsx
 "use client";
 
-import { Submission, Designation } from "@prisma/client";
-import { generateExcel } from "../../../lib/excel";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { generateExcel } from "../../../lib/excel";
 import EditModal from "./EditModal";
-import { useSession } from "next-auth/react"; // ✅ Add this
-
-interface ReportTableProps {
-  data: (Submission & {
-    designation: Designation;
-    user: {
-      facilityName: string | null;
-      division: string | null;
-      district: string | null;
-      upazila: string | null;
-    } | null;
-  })[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    totalRecords: number;
-    hasNextPage: boolean;
-    hasPrevPage: boolean;
-  };
-  onPageChange: (page: number) => void;
-  designations: Designation[]; // ✅ Add these props
-  onEditSuccess: () => void; // ✅ Add these props
-}
+import { ReportTableProps } from "../../../types/report"; // ✅ Import proper props type
 
 export default function ReportTable({
   data,
   pagination,
   onPageChange,
-  designations, // ✅ Destructure props
-  onEditSuccess, // ✅ Destructure props
+  designations,
+  onEditSuccess,
 }: ReportTableProps) {
-  const { data: session } = useSession(); // ✅ Get session
+  // ✅ Use ReportTableProps instead of ReportData
+  const { data: session } = useSession();
+
   const exportData = () => {
     const exportableData = data.map((row) => ({
       "Facility Name": row.user?.facilityName || "",

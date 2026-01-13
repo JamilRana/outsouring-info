@@ -3,13 +3,14 @@
 
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Designation } from "@prisma/client";
+import { Designation } from "../../../types/report";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmissionFormData, submissionSchema } from "../../../lib/validation";
+
 import {
   getSubmissionById,
   updateSubmission,
-} from "../../api/reports/facility/route";
+} from "../../actions/report-actions";
 
 interface EditModalProps {
   isOpen: boolean;
@@ -93,7 +94,7 @@ export default function EditModal({
       onSuccess();
       onClose();
       alert("Submission updated successfully!");
-    } catch (error: any) {
+    } catch (error) {
       console.error("Update error:", error);
       alert(error.message || "Failed to update submission");
     } finally {

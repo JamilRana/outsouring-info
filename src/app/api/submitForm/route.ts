@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     });
 
     return Response.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Submission error:", error);
     return Response.json(
       {

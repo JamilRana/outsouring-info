@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       district: facilityData.district_name,
       upazila: facilityData.upazila_name,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("HRM Login Error:", error.response?.data || error.message);
     return Response.json({ error: "Invalid credentials" }, { status: 401 });
   }

@@ -1,18 +1,23 @@
 // app/reports/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   getDesignations,
   getFacilities,
   getReportData,
-} from "../api/reports/facility/route";
+} from "../actions/report-actions";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import FilterBar from "./components/FilterBar";
 import ReportTable from "./components/ReportTable";
+import { Designation, ReportData, ReportFilters } from "../../types/report";
 
 export default function ReportsPage() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<ReportData[]>([]);
+  const [facilities, setFacilities] = useState<
+    { facilityCode: string; facilityName: string }[]
+  >([]);
+
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -20,10 +25,9 @@ export default function ReportsPage() {
     hasNextPage: false,
     hasPrevPage: false,
   });
-  const [designations, setDesignations] = useState<any[]>([]);
-  const [facilities, setFacilities] = useState<any[]>([]);
+  const [designations, setDesignations] = useState<Designation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<ReportFilters>({
     facilityCode: "",
     designationId: "",
     dateFrom: "",
@@ -36,19 +40,22 @@ export default function ReportsPage() {
     setRefreshKey((prev) => prev + 1); // Trigger data reload
   };
 
-  const loadData = async (page = 1) => {
-    setLoading(true);
-    try {
-      const result = await getReportData(page, 10, filters);
-      setData(result.data);
-      setPagination(result.pagination);
-    } catch (error) {
-      console.error("Failed to load reports:", error);
-      alert("Failed to load reports. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const loadData = useCallback(
+    async (page = 1) => {
+      setLoading(true);
+      try {
+        const result = await getReportData(page, 10, filters);
+        setData(result.data);
+        setPagination(result.pagination);
+      } catch (error) {
+        console.error("Failed to load reports:", error);
+        alert("Failed to load reports. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filters]
+  ); // depends on filters
 
   useEffect(() => {
     const fetchData = async () => {
@@ -59,15 +66,19 @@ export default function ReportsPage() {
         ]);
         setDesignations(desRes);
         setFacilities(facRes);
-        await loadData();
+        await loadData(); // now safe to depend on
       } catch (error) {
         console.error("Failed to load dependencies:", error);
       }
     };
     fetchData();
-  }, []);
+  }, [loadData]); // ✅ now properly included
 
-  const handleFilter = (newFilters: any) => {
+  useEffect(() => {
+    loadData(pagination.currentPage);
+  }, [refreshKey]);
+
+  const handleFilter = (newFilters: ReportFilters) => {
     setFilters(newFilters);
     setPagination((prev) => ({ ...prev, currentPage: 1 }));
     loadData(1);
@@ -102,7 +113,6 @@ export default function ReportsPage() {
             onPageChange={handlePageChange}
             designations={designations}
             onEditSuccess={handleEditSuccess}
-            key={refreshKey}
           />
         )}
       </div>

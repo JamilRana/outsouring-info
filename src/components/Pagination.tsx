@@ -8,7 +8,7 @@ export function Pagination({ totalPages }: { totalPages: number }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
 
   const currentPage = Number(searchParams.get("page")) || 1;
 

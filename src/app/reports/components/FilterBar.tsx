@@ -2,13 +2,13 @@
 "use client";
 
 import { useState } from "react";
-import { Designation } from "@prisma/client";
 import { useSession } from "next-auth/react";
+import { Designation, ReportFilters } from "../../../types/report";
 
 interface FilterBarProps {
   designations: Designation[];
   facilities: { facilityCode: string; facilityName: string }[];
-  onFilter: (filters: any) => void;
+  onFilter: (filters: ReportFilters) => void;
 }
 
 export default function FilterBar({

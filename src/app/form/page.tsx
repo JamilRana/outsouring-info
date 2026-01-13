@@ -50,11 +50,10 @@ export default function InputForm() {
         const res = await axios.get("/api/designation");
         setDesignations(res.data);
       } catch (error) {
-        console.error("Failed to load designations");
+        console.error("Failed to load designations", error);
       }
     };
     fetchDesignations();
-    console.log(session);
   }, []);
 
   // In your form component
@@ -75,7 +74,7 @@ export default function InputForm() {
       await axios.post("/api/submitForm", payload);
       setSubmitSuccess(true);
       setTimeout(() => setSubmitSuccess(false), 3000);
-    } catch (error: any) {
+    } catch (error) {
       // Show detailed error
       const errorMessage = error.response?.data?.error || "Submission failed";
       alert(`Error: ${errorMessage}`);

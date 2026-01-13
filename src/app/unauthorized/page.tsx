@@ -1,14 +1,13 @@
 // src/app/unauthorized/page.tsx
 "use client";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { RouteLoader } from "../../components/RouteLoader";
 
 export default function UnauthorizedPage() {
   const { data: session, status } = useSession();
-  const [loading, setLoading] = useState(true);
+  const [loading] = useState(true);
   const router = useRouter();
   useEffect(() => {
     if (status === "loading") return;
@@ -24,7 +23,7 @@ export default function UnauthorizedPage() {
       <div className="text-center space-y-4">
         <h1 className="text-2xl font-bold text-destructive">Access Denied</h1>
         <p className="text-muted-foreground">
-          You don't have permission to access this page.
+          You do not have permission to access this page.
         </p>
       </div>
     </div>
